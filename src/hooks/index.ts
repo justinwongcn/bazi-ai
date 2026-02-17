@@ -6,3 +6,5 @@ export { useFortuneData } from './useFortuneData';
 export type { FortuneData } from './useFortuneData';
 export { useInitialSelection, useFlowData } from './useFlowData';
 export type { SelectionState, FlowData } from './useFlowData';
+export { useProPageData } from './useProPageData';
+export type { TableColumn, ProPageColumns, BirthInfoDisplay, UseProPageDataResult } from './useProPageData';

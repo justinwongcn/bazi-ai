@@ -16,3 +16,8 @@ export type {
   CityInfo,
   RegionData,
 } from './common';
+
+export type {
+  PillarType,
+  SelectionStep,
+} from './pillar';
