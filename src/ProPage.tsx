@@ -3,7 +3,8 @@ import Sidebar from './components/Sidebar';
 import { useBaseParams, useBirthInfo, useFortuneData, useInitialSelection, useFlowData } from './hooks';
 import { buildPillarInfo, getWuXingStatus } from './services';
 import { formatSolarTime } from './utils/format';
-import { SixtyCycle, HeavenStem, DecadeFortune } from 'tyme4ts';
+import { DecadeFortune } from 'tyme4ts';
+import { ProFortuneSection } from './components/pro/ProFortuneSection';
 
 const DV_ATTR = { 'data-v-07b66fb4': '' } as const;
 
@@ -246,7 +247,7 @@ function ProPage() {
                       childLimit={fortuneData.childLimit}
                       currentAge={new Date().getFullYear() - birthInfo.birthYear + 1}
                     />
-                    <FortuneSection
+                    <ProFortuneSection
                       title="大运"
                       items={fortuneData.decades.map((d, idx) => ({
                         label: `${d.getStartSixtyCycleYear().getYear()}`,
@@ -271,7 +272,7 @@ function ProPage() {
                       }}
                       dayStem={birthInfo.dayStem}
                     />
-                    <FortuneSection
+                    <ProFortuneSection
                       title={selectedDecadeIndex < 0 ? '小运' : '流年'}
                       items={(selectedDecadeIndex < 0 ? fortuneData.smallFortunes : flowData.flowYears).map((item, idx) => ({
                         label: selectedDecadeIndex < 0 ? `${birthInfo.birthYear + (item.age || 0) - 1}` : `${item.year}`,
@@ -292,7 +293,7 @@ function ProPage() {
                       }))}
                       dayStem={birthInfo.dayStem}
                     />
-                    <FortuneSection
+                    <ProFortuneSection
                       title="流月"
                       items={flowData.flowMonths.map((item, idx) => ({
                         label: `${item.month}月`,
@@ -309,7 +310,7 @@ function ProPage() {
                       dayStem={birthInfo.dayStem}
                     />
                     {showFlowDay && (
-                      <FortuneSection
+                      <ProFortuneSection
                         title="流日"
                         items={flowData.flowDays.map((item, idx) => ({
                           label: `${item.day}日`,
@@ -325,7 +326,7 @@ function ProPage() {
                       />
                     )}
                     {showFlowHour && (
-                      <FortuneSection
+                      <ProFortuneSection
                         title="流时"
                         items={flowData.flowHours.map((item, idx) => ({
                           label: `${String(item.hour).padStart(2, '0')}:00`,
@@ -470,108 +471,6 @@ const QiYunInfo: React.FC<{
     </div>
   </div>
 );
-
-const FortuneSection: React.FC<{
-  title: string;
-  items: Array<{
-    label: string;
-    subLabel?: string;
-    pillar: string;
-    isSelected: boolean;
-    onClick: () => void;
-  }>;
-  prependItem?: {
-    label: string;
-    subLabel: string;
-    pillar: string;
-    isSelected: boolean;
-    onClick: () => void;
-  };
-  dayStem: HeavenStem;
-}> = ({ title, items, prependItem, dayStem }) => {
-  const getElementColor = (char: string) => {
-    if ('甲乙寅卯'.includes(char)) return 'woodColor';
-    if ('丙丁巳午'.includes(char)) return 'fireColor';
-    if ('戊己辰戌丑未'.includes(char)) return 'soilColor';
-    if ('庚辛申酉'.includes(char)) return 'goldColor';
-    return 'waterColor';
-  };
-
-  const getTenStarShort = (name: string) => {
-    const map: Record<string, string> = {
-      '比肩': '比', '劫财': '劫', '食神': '食', '伤官': '伤',
-      '偏财': '才', '正财': '财', '七杀': '杀', '正官': '官',
-      '偏印': '枭', '正印': '印',
-    };
-    return map[name] || name.slice(0, 1);
-  };
-
-  const renderItem = (item: typeof items[0]) => {
-    const stem = item.pillar.charAt(0);
-    const branch = item.pillar.charAt(1);
-    
-    const isValidPillar = stem && branch && '甲乙丙丁戊己庚辛壬癸'.includes(stem) && '子丑寅卯辰巳午未申酉戌亥'.includes(branch);
-    
-    let stemTenStar = '';
-    let branchTenStar = '';
-    
-    if (isValidPillar) {
-      try {
-        stemTenStar = dayStem.getTenStar(HeavenStem.fromName(stem)).getName();
-        const branchMain = SixtyCycle.fromName(item.pillar).getEarthBranch().getHideHeavenStemMain();
-        branchTenStar = branchMain ? dayStem.getTenStar(branchMain).getName() : '';
-      } catch {
-        stemTenStar = '';
-        branchTenStar = '';
-      }
-    }
-
-    return (
-      <div
-        key={item.label}
-        className={`pro-pan-yun-item pointer ${item.isSelected ? 'pro-pan-yun-item-selected' : ''}`}
-        {...DV_ATTR}
-        onClick={item.onClick}
-      >
-        <span className="pro-pan-yun-item-small" {...DV_ATTR}>{item.label}</span>
-        {item.subLabel && (
-          <span className="pro-pan-yun-item-small" {...DV_ATTR} style={{ marginTop: 4 }}>
-            {item.subLabel}
-          </span>
-        )}
-        <span className="pro-pan-yun-item-label" {...DV_ATTR}>
-          <span className={`pro-pan-yun-item-text ${isValidPillar ? getElementColor(stem) : ''}`} {...DV_ATTR} style={!isValidPillar ? { color: 'black' } : undefined}>
-            {stem}
-          </span>
-          <span className="pro-pan-yun-item-shishen" {...DV_ATTR}>
-            {stemTenStar ? getTenStarShort(stemTenStar) : ''}
-          </span>
-        </span>
-        <span className="pro-pan-yun-item-label" {...DV_ATTR}>
-          <span className={`pro-pan-yun-item-text ${isValidPillar ? getElementColor(branch) : ''}`} {...DV_ATTR} style={!isValidPillar ? { color: 'black' } : undefined}>
-            {branch}
-          </span>
-          <span className="pro-pan-yun-item-shishen" {...DV_ATTR}>
-            {branchTenStar ? getTenStarShort(branchTenStar) : ''}
-          </span>
-        </span>
-      </div>
-    );
-  };
-
-  return (
-    <div className="pro-pan-yun" {...DV_ATTR}>
-      <div className="pro-pan-yun-item pro-pan-yun-item-title" {...DV_ATTR}>
-        <span {...DV_ATTR}>{title.charAt(0)}</span>
-        <span {...DV_ATTR}>{title.charAt(1)}</span>
-      </div>
-      <div className="pro-pan-yun-items" {...DV_ATTR}>
-        {prependItem && renderItem(prependItem)}
-        {items.map(renderItem)}
-      </div>
-    </div>
-  );
-};
 
 const WuXingStatusDisplay: React.FC<{ status: string[] }> = ({ status }) => (
   <div className="pro-pan-wuxing" {...DV_ATTR}>

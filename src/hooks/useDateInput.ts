@@ -193,6 +193,11 @@ export const useDateInput = (options?: UseDateInputOptions) => {
   }, [selectedMonth, selectedYear, selectedDay, normalizeMonth, clampDay, setFormData]);
 
   const handleTimeConfirm = useCallback(() => {
+    if (formData.dateType === '2') {
+      setShowTimePicker(false);
+      return;
+    }
+
     const monthValue = formData.dateType === '0' ? Math.abs(selectedMonth) : selectedMonth;
     const monthStr = String(monthValue).padStart(2, '0');
     const dayStr = String(selectedDay).padStart(2, '0');
