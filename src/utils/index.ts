@@ -3,3 +3,8 @@ export * from './baziCalculator';
 export * from './cityLocator';
 export * from './defaultParams';
 export * from './solarTimeUtil';
+export { getElementColor, getElementMeta, getElementIconDataUri } from './elementHelper';
+export { parseDateTime, getMonthOptions, getDayCount, normalizeMonth, clampDay, formatDisplayDate, getLunarDateFromSolar } from './dateHelpers';
+export type { ParsedDateTime, MonthOption } from './dateHelpers';
+export { getHiddenStems } from './hiddenStems';
+export * from './ganzhiCalculator';

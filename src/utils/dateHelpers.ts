@@ -1,5 +1,20 @@
 import { LunarYear, LunarMonth, LunarDay, SolarTime } from 'tyme4ts';
 
+export interface ParsedDateTime {
+  year: number;
+  month: number;
+  day: number;
+  hour: number;
+  minute: number;
+}
+
+export const parseDateTime = (value: string): ParsedDateTime => {
+  const [datePart, timePart = '00:00'] = value.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [hour, minute] = timePart.split(':').map(Number);
+  return { year, month, day, hour, minute };
+};
+
 export interface MonthOption {
   value: number;
   label: string;

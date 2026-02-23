@@ -141,11 +141,11 @@ function ProPage() {
   }, [birthInfo, selectedDecade, selectedDecadeIndex, selectedFlowYear, selectedFlowMonth, selectedFlowDay, selectedFlowHour, selectedSmallFortune]);
 
   const tableColumns: TableColumn[] = useMemo(() => [
+    ...(showFlowHour ? [{ key: 'liushi', label: '流时', pillar: columns.liushiInfo.name }] : []),
+    ...(showFlowDay ? [{ key: 'liuri', label: '流日', pillar: columns.liuriInfo.name }] : []),
+    { key: 'liuyue', label: '流月', pillar: columns.liuyueInfo.name },
     { key: 'liunian', label: '流年', pillar: columns.liunianInfo.name },
     { key: 'dayun', label: selectedDecadeIndex < 0 ? '小运' : '大运', pillar: columns.dayunInfo.name },
-    { key: 'liuyue', label: '流月', pillar: columns.liuyueInfo.name },
-    ...(showFlowDay ? [{ key: 'liuri', label: '流日', pillar: columns.liuriInfo.name }] : []),
-    ...(showFlowHour ? [{ key: 'liushi', label: '流时', pillar: columns.liushiInfo.name }] : []),
     { key: 'year', label: '年柱', pillar: columns.yearInfo.name },
     { key: 'month', label: '月柱', pillar: columns.monthInfo.name },
     { key: 'day', label: '日柱', pillar: columns.dayInfo.name },
@@ -367,7 +367,7 @@ const TableBody: React.FC<{
   dayLabel: string;
 }> = ({ columns, pillarData, dayLabel }) => {
   const rows = ['主星', '天干', '地支', '藏干', '星运', '自坐', '空亡', '纳音'];
-  const pillarKeys = ['liunianInfo', 'dayunInfo', 'liuyueInfo', 'liuriInfo', 'liushiInfo', 'yearInfo', 'monthInfo', 'dayInfo', 'hourInfo'];
+  const pillarKeys = ['liushiInfo', 'liuriInfo', 'liuyueInfo', 'liunianInfo', 'dayunInfo', 'yearInfo', 'monthInfo', 'dayInfo', 'hourInfo'];
 
   return (
     <>
