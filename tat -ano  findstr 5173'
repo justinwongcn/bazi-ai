@@ -1,0 +1,172 @@
+[1mdiff --git a/.trae/skill-config.json b/.trae/skill-config.json[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a8c6f85[m
+[1m--- /dev/null[m
+[1m+++ b/.trae/skill-config.json[m
+[36m@@ -0,0 +1,5 @@[m
+[32m+[m[32m{[m
+[32m+[m[32m  "disabledSkills": [[m
+[32m+[m[32m    "chrome-devtools"[m
+[32m+[m[32m  ][m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/DetailPage.tsx b/src/DetailPage.tsx[m
+[1mindex 4cb9b50..f011b29 100644[m
+[1m--- a/src/DetailPage.tsx[m
+[1m+++ b/src/DetailPage.tsx[m
+[36m@@ -188,7 +188,7 @@[m [mfunction DetailPage() {[m
+         tg: baziResult.dayPillar[0],[m
+         dz: baziResult.dayPillar[1],[m
+         hiddenStems: baziResult.dayHiddenStems,[m
+[31m-        mainTenStar: baziResult.dayTenStar,[m
+[32m+[m[32m        mainTenStar: sexLabel === '乾造' ? '元男' : '元女',[m
+         subTenStars: baziResult.dayHiddenTenStars,[m
+         starLuck: baziResult.dayStarLuck,[m
+         selfSeat: baziResult.daySelfSeat,[m
+[1mdiff --git a/src/InputPage.tsx b/src/InputPage.tsx[m
+[1mindex 4843dc5..b8557ca 100644[m
+[1m--- a/src/InputPage.tsx[m
+[1m+++ b/src/InputPage.tsx[m
+[36m@@ -121,6 +121,18 @@[m [mconst InputPage = () => {[m
+     navigate(`/detail?${query}`);[m
+   }, [formData, navigate]);[m
+ [m
+[32m+[m[32m  const handleTimeConfirm = useCallback(() => {[m
+[32m+[m[32m    dateInput.handleTimeConfirm();[m
+[32m+[m[32m    if (formData.dateType === DATE_TYPE.PILLAR) {[m
+[32m+[m[32m      baziSearch.search({[m
+[32m+[m[32m        yearPillar: pillarInput.selectedYearPillar,[m
+[32m+[m[32m        monthPillar: pillarInput.selectedMonthPillar,[m
+[32m+[m[32m        dayPillar: pillarInput.selectedDayPillar,[m
+[32m+[m[32m        hourPillar: pillarInput.selectedHourPillar[m
+[32m+[m[32m      });[m
+[32m+[m[32m    }[m
+[32m+[m[32m  }, [formData.dateType, dateInput, baziSearch, pillarInput]);[m
+[32m+[m
+   const handleBaziResultConfirm = useCallback(() => {[m
+     const result = baziSearch.confirmSelection();[m
+     if (!result) return;[m
+[36m@@ -138,16 +150,20 @@[m [mconst InputPage = () => {[m
+ [m
+   const handleSubmit = useCallback(() => {[m
+     if (formData.dateType === DATE_TYPE.PILLAR) {[m
+[31m-      baziSearch.search({[m
+[31m-        yearPillar: pillarInput.selectedYearPillar,[m
+[31m-        monthPillar: pillarInput.selectedMonthPillar,[m
+[31m-        dayPillar: pillarInput.selectedDayPillar,[m
+[31m-        hourPillar: pillarInput.selectedHourPillar[m
+[31m-      });[m
+[32m+[m[32m      if (!baziSearch.selectedResult) {[m
+[32m+[m[32m        baziSearch.search({[m
+[32m+[m[32m          yearPillar: pillarInput.selectedYearPillar,[m
+[32m+[m[32m          monthPillar: pillarInput.selectedMonthPillar,[m
+[32m+[m[32m          dayPillar: pillarInput.selectedDayPillar,[m
+[32m+[m[32m          hourPillar: pillarInput.selectedHourPillar[m
+[32m+[m[32m        });[m
+[32m+[m[32m        return;[m
+[32m+[m[32m      }[m
+[32m+[m[32m      handleBaziResultConfirm();[m
+     } else {[m
+       navigateToDetail(formData.birthDate);[m
+     }[m
+[31m-  }, [formData, pillarInput, baziSearch, navigateToDetail]);[m
+[32m+[m[32m  }, [formData, pillarInput, baziSearch, navigateToDetail, handleBaziResultConfirm]);[m
+ [m
+   return ([m
+     <div className="flex min-h-screen bg-[rgb(245,245,247)] text-gray-900">[m
+[36m@@ -220,6 +236,20 @@[m [mconst InputPage = () => {[m
+                 </div>[m
+               )}[m
+ [m
+[32m+[m[32m              {baziSearch.selectedResult && ([m
+[32m+[m[32m                <div style={{[m
+[32m+[m[32m                  marginBottom: Spacing.section,[m
+[32m+[m[32m                  padding: '10px 15px',[m
+[32m+[m[32m                  backgroundColor: 'rgb(240, 255, 240)',[m
+[32m+[m[32m                  borderRadius: 8,[m
+[32m+[m[32m                  color: 'rgb(50, 150, 50)',[m
+[32m+[m[32m                  textAlign: 'center',[m
+[32m+[m[32m                  fontSize: FontSize.sm[m
+[32m+[m[32m                }}>[m
+[32m+[m[32m                  已选择：{baziSearch.selectedResult.formattedTime}[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m              )}[m
+[32m+[m
+               <div style={{ marginTop: 40 }}>[m
+                 <div[m
+                   onClick={handleSubmit}[m
+[36m@@ -264,7 +294,7 @@[m [mconst InputPage = () => {[m
+         onTimeInputBlur={dateInput.handleTimeInput}[m
+         onSetToday={dateInput.handleSetToday}[m
+         onClose={() => dateInput.setShowTimePicker(false)}[m
+[31m-        onConfirm={dateInput.handleTimeConfirm}[m
+[32m+[m[32m        onConfirm={handleTimeConfirm}[m
+         onYearSelect={dateInput.handleYearSelect}[m
+         onMonthSelect={dateInput.handleMonthSelect}[m
+         onDaySelect={(day) => { dateInput.setSelectedDay(day); dateInput.setIsTodaySelected(false); }}[m
+[1mdiff --git a/src/ResultPage.tsx b/src/ResultPage.tsx[m
+[1mindex af5e80a..0bf8893 100644[m
+[1m--- a/src/ResultPage.tsx[m
+[1m+++ b/src/ResultPage.tsx[m
+[36m@@ -185,7 +185,7 @@[m [mfunction ResultPage() {[m
+           tg: baziResult.dayPillar[0],[m
+           dz: baziResult.dayPillar[1],[m
+           hiddenStems: getHiddenStems(baziResult.dayPillar[1]),[m
+[31m-          mainTenStar: baziResult.dayTenStar,[m
+[32m+[m[32m          mainTenStar: sex === '乾造' ? '元男' : '元女',[m
+           subTenStars: baziResult.dayHiddenTenStars,[m
+           starLuck: baziResult.dayStarLuck,[m
+           selfSeat: baziResult.daySelfSeat,[m
+[1mdiff --git a/src/components/input/AddressPickerModal.test.tsx b/src/components/input/AddressPickerModal.test.tsx[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e80d105[m
+[1m--- /dev/null[m
+[1m+++ b/src/components/input/AddressPickerModal.test.tsx[m
+[36m@@ -0,0 +1,93 @@[m
+[32m+[m[32mimport React, { act } from 'react';[m
+[32m+[m[32mimport { createRoot } from 'react-dom/client';[m
+[32m+[m[32mimport { describe, it, expect, vi } from 'vitest';[m
+[32m+[m[32mimport AddressPickerModal from './AddressPickerModal';[m
+[32m+[m
+[32m+[m[32mdescribe('AddressPickerModal', () => {[m
+[32m+[m[32m  it('should not emit selection changes during auto scroll', async () => {[m
+[32m+[m[32m    (globalThis as unknown as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;[m
+[32m+[m[32m    vi.useFakeTimers();[m
+[32m+[m[32m    const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb: FrameRequestCallback) => {[m
+[32m+[m[32m      cb(0);[m
+[32m+[m[32m      return 1;[m
+[32m+[m[32m    });[m
+[32m+[m
+[32m+[m[32m    const provinceRef = React.createRef<HTMLDivElement>();[m
+[32m+[m[32m    const cityRef = React.createRef<HTMLDivElement>();[m
+[32m+[m[32m    const districtRef = React.createRef<HTMLDivElement>();[m
+[32m+[m
+[32m+[m[32m    const onProvinceSelect = vi.fn();[m
+[32m+[m[32m    const onCitySelect = vi.fn();[m
+[32m+[m[32m    const onDistrictSelect = vi.fn();[m
+[32m+[m
+[32m+[m[32m    const regionData = {[m
+[32m+[m[32m      provinces: ['北京市', '江西省'],[m
+[32m+[m[32m      cities: {[m
+[32m+[m[32m        '北京市': ['北京城区'],[m
+[32m+[m[32m        '江西省': ['萍乡市', '上饶市'],[m
+[32m+[m[32m      },[m
+[32m+[m[32m      districts: {[m
+[32m+[m[32m        '北京城区': ['东城区'],[m
+[32m+[m[32m        '萍乡市': ['安源区'],[m
+[32m+[m[32m        '上饶市': ['余干县'],[m
+[32m+[m[32m      },[m
+[32m+[m[32m    };[m
+[32m+[m
+[32m+[m[32m    const container = document.createElement('div');[m
+[32m+[m[32m    document.body.appendChild(container);[m
+[32m+[m[32m    const root = createRoot(container);[m
+[32m+[m
+[32m+[m[32m    try {[m
+[32m+[m[32m      await act(async () => {[m
+[32m+[m[32m        root.render([m
+[32m+[m[32m          <AddressPickerModal[m
+[32m+[m[32m            show[m
+[32m+[m[32m            addressTab="domestic"[m
+[32m+[m[32m            addressSearch=""[m
+[32m+[m[32m            searchResults={[]}[m

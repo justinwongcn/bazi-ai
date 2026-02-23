@@ -1,8 +1,6 @@
 import type { PillarData } from '../../types';
 import type { TableColumn } from '../../hooks';
 
-const DV_ATTR = { 'data-v-07b66fb4': '' } as const;
-
 interface ProTableBodyProps {
   columns: TableColumn[];
   pillarData: Record<string, PillarData>;
@@ -17,71 +15,71 @@ export function ProTableBody({ columns, pillarData, dayLabel }: ProTableBodyProp
   return (
     <>
       {rows.map((row) => (
-        <div key={row} className={`pro-pan-row ${row === '藏干' ? 'greyBg' : ''}`} {...DV_ATTR}>
-          <div className="pro-pan-row-item paipanTitleColor" {...DV_ATTR}>{row}</div>
+        <div key={row} className={`pro-pan-row ${row === '藏干' ? 'greyBg' : ''}`}>
+          <div className="pro-pan-row-item paipanTitleColor">{row}</div>
           {columns.map((col, colIdx) => {
             const pillarKey = pillarKeys.find(k => pillarData[k]?.name === col.pillar) || 'hourInfo';
             const pillar = pillarData[pillarKey];
-            if (!pillar) return <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>-</div>;
+            if (!pillar) return <div key={colIdx} className="pro-pan-row-item">-</div>;
 
             switch (row) {
               case '主星':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>
-                    <span className={pillar.tenStarName === dayLabel ? '' : 'pointer'} {...DV_ATTR}>
+                  <div key={colIdx} className="pro-pan-row-item">
+                    <span className={pillar.tenStarName === dayLabel ? '' : 'pointer'}>
                       {pillar.tenStarName}
                     </span>
                   </div>
                 );
               case '天干':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item gzClass" {...DV_ATTR}>
-                    <span className={pillar.stemColor} {...DV_ATTR}>{pillar.stem}</span>
+                  <div key={colIdx} className="pro-pan-row-item gzClass">
+                    <span className={pillar.stemColor}>{pillar.stem}</span>
                   </div>
                 );
               case '地支':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item gzClass" {...DV_ATTR}>
-                    <span className={pillar.branchColor} {...DV_ATTR}>{pillar.branch}</span>
+                  <div key={colIdx} className="pro-pan-row-item gzClass">
+                    <span className={pillar.branchColor}>{pillar.branch}</span>
                   </div>
                 );
               case '藏干':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item columnFlex alignSelfStart" {...DV_ATTR}>
+                  <div key={colIdx} className="pro-pan-row-item columnFlex alignSelfStart">
                     {pillar.hiddenStems.map((hs, i) => (
-                      <span key={i} className={hs.stemColor} {...DV_ATTR} style={{ fontSize: 0, marginBottom: 2 }}>
-                        <span {...DV_ATTR} style={{ fontSize: 15 }}>{hs.stem}</span>
-                        <span className="pointer" {...DV_ATTR} style={{ color: 'black', fontSize: 14 }}>{hs.tenStarName}</span>
+                      <span key={i} className={hs.stemColor} style={{ fontSize: 0, marginBottom: 2 }}>
+                        <span style={{ fontSize: 15 }}>{hs.stem}</span>
+                        <span className="pointer" style={{ color: 'black', fontSize: 14 }}>{hs.tenStarName}</span>
                       </span>
                     ))}
                   </div>
                 );
               case '星运':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>
-                    <span className="pointer" {...DV_ATTR}>{pillar.starLuck}</span>
+                  <div key={colIdx} className="pro-pan-row-item">
+                    <span className="pointer">{pillar.starLuck}</span>
                   </div>
                 );
               case '自坐':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>
-                    <span className="pointer" {...DV_ATTR}>{pillar.selfSeat}</span>
+                  <div key={colIdx} className="pro-pan-row-item">
+                    <span className="pointer">{pillar.selfSeat}</span>
                   </div>
                 );
               case '空亡':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>
+                  <div key={colIdx} className="pro-pan-row-item">
                     {pillar.empty}
                   </div>
                 );
               case '纳音':
                 return (
-                  <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>
-                    <span className="pointer" {...DV_ATTR}>{pillar.naYin}</span>
+                  <div key={colIdx} className="pro-pan-row-item">
+                    <span className="pointer">{pillar.naYin}</span>
                   </div>
                 );
               default:
-                return <div key={colIdx} className="pro-pan-row-item" {...DV_ATTR}>-</div>;
+                return <div key={colIdx} className="pro-pan-row-item">-</div>;
             }
           })}
         </div>

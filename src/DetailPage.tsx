@@ -188,7 +188,7 @@ function DetailPage() {
         tg: baziResult.dayPillar[0],
         dz: baziResult.dayPillar[1],
         hiddenStems: baziResult.dayHiddenStems,
-        mainTenStar: baziResult.dayTenStar,
+        mainTenStar: sexLabel === '乾造' ? '元男' : '元女',
         subTenStars: baziResult.dayHiddenTenStars,
         starLuck: baziResult.dayStarLuck,
         selfSeat: baziResult.daySelfSeat,

@@ -67,6 +67,8 @@ const AddressPickerModal: React.FC<AddressPickerModalProps> = ({
   const dRef = districtScrollRef || defaultDistrictRef;
 
   const scrollTimeouts = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const autoScrollingRef = useRef(false);
+  const autoScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragStateRef = useRef({
     isDragging: false,
     startY: 0,
@@ -85,20 +87,38 @@ const AddressPickerModal: React.FC<AddressPickerModalProps> = ({
         const index = list.indexOf(val);
         if (index !== -1) {
           const targetTop = index * 40;
-          ref.current.scrollTo({ top: targetTop, behavior: 'smooth' });
+          ref.current.scrollTop = targetTop;
         }
       }
     };
 
     // 使用 requestAnimationFrame 确保在 DOM 更新后执行
     requestAnimationFrame(() => {
+      autoScrollingRef.current = true;
+      if (autoScrollTimeoutRef.current) {
+        clearTimeout(autoScrollTimeoutRef.current);
+      }
+      Object.values(scrollTimeouts.current).forEach(clearTimeout);
+      scrollTimeouts.current = {};
       scrollTo(pRef, selectedProvince, regionData.provinces);
       scrollTo(cRef, selectedCity, regionData.cities[selectedProvince] || []);
       scrollTo(dRef, selectedDistrict, regionData.districts[selectedCity] || []);
+      autoScrollTimeoutRef.current = setTimeout(() => {
+        autoScrollingRef.current = false;
+      }, 250);
     });
+
+    return () => {
+      if (autoScrollTimeoutRef.current) {
+        clearTimeout(autoScrollTimeoutRef.current);
+        autoScrollTimeoutRef.current = null;
+      }
+      autoScrollingRef.current = false;
+    };
   }, [show, selectedProvince, selectedCity, selectedDistrict, regionData, searchResults.length, pRef, cRef, dRef]);
 
   const handleScroll = (key: string, e: React.UIEvent<HTMLDivElement>, list: string[], currentVal: string, onSelect: (val: string) => void) => {
+    if (autoScrollingRef.current) return;
     const target = e.target as HTMLDivElement;
     if (scrollTimeouts.current[key]) {
       clearTimeout(scrollTimeouts.current[key]);

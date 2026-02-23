@@ -1,4 +1,4 @@
-import { LunarYear, LunarMonth } from 'tyme4ts';
+import { LunarYear, LunarMonth, LunarDay, SolarTime } from 'tyme4ts';
 
 export interface MonthOption {
   value: number;
@@ -40,4 +40,48 @@ export const normalizeMonth = (monthValue: number, year: number, dateType: strin
 export const clampDay = (year: number, monthValue: number, dateType: string, dayValue: number): number => {
   const maxDay = getDayCount(year, monthValue, dateType);
   return Math.min(dayValue, maxDay);
+};
+
+export const formatDisplayDate = (
+  dateStr: string,
+  dateType: string,
+  lunarMonthVal: number,
+  lunarLeap: boolean
+): string => {
+  const date = new Date(dateStr);
+  const year = date.getFullYear();
+  const day = date.getDate();
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  
+  if (dateType === '0') {
+    const monthValue = lunarLeap ? -lunarMonthVal : lunarMonthVal;
+    const lunarMonth = LunarMonth.fromYm(year, monthValue);
+    const lunarDay = LunarDay.fromYmd(year, monthValue, day);
+    return `${year}年${lunarMonth.getName()}${lunarDay.getName()} ${hour}:${minute}`;
+  }
+  
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const dayStr = String(day).padStart(2, '0');
+  return `${year}年${month}月${dayStr}日 ${hour}:${minute}`;
+};
+
+export const getLunarDateFromSolar = (date: Date) => {
+  const solarTime = SolarTime.fromYmdHms(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate(),
+    date.getHours(),
+    date.getMinutes(),
+    date.getSeconds()
+  );
+  const lunarHour = solarTime.getLunarHour();
+  const lunarDay = lunarHour.getLunarDay();
+  const lunarMonth = lunarDay.getLunarMonth();
+  
+  return {
+    year: lunarDay.getYear(),
+    month: lunarMonth.getMonthWithLeap(),
+    day: lunarDay.getDay()
+  };
 };

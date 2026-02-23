@@ -1,14 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
-import TimePickerModal from './components/input/TimePickerModal';
 import AddressPickerModal from './components/input/AddressPickerModal';
 import DateInputSection from './components/input/DateInputSection';
 import LocationInputSection from './components/input/LocationInputSection';
 import BaziResultModal from './components/input/BaziResultModal';
 import NameInput from './components/ui/NameInput';
 import SexSelector from './components/ui/SexSelector';
-import { useDateInput } from './hooks/useDateInput';
 import { useLocationInput } from './hooks/useLocationInput';
 import { usePillarInput } from './hooks/usePillarInput';
 import { useBaziSearch } from './hooks/useBaziSearch';
@@ -57,15 +55,6 @@ const InputPage = () => {
     isDst: searchParams.get('isDst') === '1',
     isTrueSolar: searchParams.get('isTrueSolar') === '1',
     isEarlyRat: searchParams.get('isEarlyRat') === '1'
-  });
-
-  const dateInput = useDateInput({
-    initialDateType,
-    initialBirthDate,
-    initialLunarMonth,
-    initialLunarLeap,
-    formData,
-    onFormDataChange: setFormData
   });
 
   const pillarInput = usePillarInput();
@@ -121,6 +110,17 @@ const InputPage = () => {
     navigate(`/detail?${query}`);
   }, [formData, navigate]);
 
+  const handleTimeConfirm = useCallback(() => {
+    if (formData.dateType === DATE_TYPE.PILLAR) {
+      baziSearch.search({
+        yearPillar: pillarInput.selectedYearPillar,
+        monthPillar: pillarInput.selectedMonthPillar,
+        dayPillar: pillarInput.selectedDayPillar,
+        hourPillar: pillarInput.selectedHourPillar
+      });
+    }
+  }, [formData.dateType, baziSearch, pillarInput]);
+
   const handleBaziResultConfirm = useCallback(() => {
     const result = baziSearch.confirmSelection();
     if (!result) return;
@@ -138,16 +138,20 @@ const InputPage = () => {
 
   const handleSubmit = useCallback(() => {
     if (formData.dateType === DATE_TYPE.PILLAR) {
-      baziSearch.search({
-        yearPillar: pillarInput.selectedYearPillar,
-        monthPillar: pillarInput.selectedMonthPillar,
-        dayPillar: pillarInput.selectedDayPillar,
-        hourPillar: pillarInput.selectedHourPillar
-      });
+      if (!baziSearch.selectedResult) {
+        baziSearch.search({
+          yearPillar: pillarInput.selectedYearPillar,
+          monthPillar: pillarInput.selectedMonthPillar,
+          dayPillar: pillarInput.selectedDayPillar,
+          hourPillar: pillarInput.selectedHourPillar
+        });
+        return;
+      }
+      handleBaziResultConfirm();
     } else {
       navigateToDetail(formData.birthDate);
     }
-  }, [formData, pillarInput, baziSearch, navigateToDetail]);
+  }, [formData, pillarInput, baziSearch, navigateToDetail, handleBaziResultConfirm]);
 
   return (
     <div className="flex min-h-screen bg-[rgb(245,245,247)] text-gray-900">
@@ -190,11 +194,9 @@ const InputPage = () => {
 
               <DateInputSection
                 formData={formData}
-                setShowTimePicker={dateInput.setShowTimePicker}
-                setTimeTab={dateInput.setTimeTab}
-                formatDisplayDate={dateInput.formatDisplayDate}
-                handleDateTypeChange={dateInput.handleDateTypeChange}
-                pillarInput={formData.dateType === DATE_TYPE.PILLAR ? pillarInput : undefined}
+                setFormData={setFormData}
+                pillarInput={pillarInput}
+                onTimeConfirm={handleTimeConfirm}
               />
 
               <LocationInputSection
@@ -220,6 +222,20 @@ const InputPage = () => {
                 </div>
               )}
 
+              {baziSearch.selectedResult && (
+                <div style={{
+                  marginBottom: Spacing.section,
+                  padding: '10px 15px',
+                  backgroundColor: 'rgb(240, 255, 240)',
+                  borderRadius: 8,
+                  color: 'rgb(50, 150, 50)',
+                  textAlign: 'center',
+                  fontSize: FontSize.sm
+                }}>
+                  已选择：{baziSearch.selectedResult.formattedTime}
+                </div>
+              )}
+
               <div style={{ marginTop: 40 }}>
                 <div
                   onClick={handleSubmit}
@@ -237,53 +253,6 @@ const InputPage = () => {
           </div>
         </div>
       </div>
-
-      <TimePickerModal
-        show={dateInput.showTimePicker}
-        timeTab={dateInput.timeTab}
-        dateType={formData.dateType}
-        isTodaySelected={dateInput.isTodaySelected}
-        timeInput={dateInput.timeInput}
-        selectedYear={dateInput.selectedYear}
-        selectedMonth={dateInput.selectedMonth}
-        selectedDay={dateInput.selectedDay}
-        selectedHour={dateInput.selectedHour}
-        selectedMinute={dateInput.selectedMinute}
-        selectedYearPillar={pillarInput.selectedYearPillar}
-        selectedMonthPillar={pillarInput.selectedMonthPillar}
-        selectedDayPillar={pillarInput.selectedDayPillar}
-        selectedHourPillar={pillarInput.selectedHourPillar}
-        showStemPopover={pillarInput.showStemPopover}
-        showBranchPopover={pillarInput.showBranchPopover}
-        activePillar={pillarInput.activePillar}
-        currentStep={pillarInput.currentStep}
-        completedPillars={pillarInput.completedPillars}
-        onTimeTabChange={dateInput.setTimeTab}
-        onDateTypeChange={dateInput.handleDateTypeChange}
-        onTimeInputChange={dateInput.setTimeInput}
-        onTimeInputBlur={dateInput.handleTimeInput}
-        onSetToday={dateInput.handleSetToday}
-        onClose={() => dateInput.setShowTimePicker(false)}
-        onConfirm={dateInput.handleTimeConfirm}
-        onYearSelect={dateInput.handleYearSelect}
-        onMonthSelect={dateInput.handleMonthSelect}
-        onDaySelect={(day) => { dateInput.setSelectedDay(day); dateInput.setIsTodaySelected(false); }}
-        onHourSelect={(hour) => { dateInput.setSelectedHour(hour); dateInput.setIsTodaySelected(false); }}
-        onMinuteSelect={(minute) => { dateInput.setSelectedMinute(minute); dateInput.setIsTodaySelected(false); }}
-        onPillarClick={pillarInput.openStemSelector}
-        onStemSelect={pillarInput.handleStemSelect}
-        onBranchSelect={pillarInput.handleBranchSelect}
-        onYearPillarChange={pillarInput.setSelectedYearPillar}
-        onMonthPillarChange={pillarInput.setSelectedMonthPillar}
-        onDayPillarChange={pillarInput.setSelectedDayPillar}
-        onHourPillarChange={pillarInput.setSelectedHourPillar}
-        onCancelSelection={pillarInput.cancelSelection}
-        yearScrollRef={dateInput.refs.yearScrollRef}
-        monthScrollRef={dateInput.refs.monthScrollRef}
-        dayScrollRef={dateInput.refs.dayScrollRef}
-        hourScrollRef={dateInput.refs.hourScrollRef}
-        minuteScrollRef={dateInput.refs.minuteScrollRef}
-      />
 
       <AddressPickerModal
         show={locationInput.showAddressPicker}

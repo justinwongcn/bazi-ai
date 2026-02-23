@@ -2,8 +2,6 @@ import React from 'react';
 import type { PillarData } from '../types/bazi';
 import { getElementRgbColor, getTenStarShort } from '../services/elementService';
 
-const DV_ATTR = { 'data-v-07b66fb4': '' } as const;
-
 interface PillarColumnProps {
   pillar: PillarData;
   dayLabel: string;
@@ -12,68 +10,67 @@ interface PillarColumnProps {
 export const PillarColumn: React.FC<PillarColumnProps> = ({ pillar, dayLabel }) => {
   return (
     <>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item" {...DV_ATTR}>
-          <span className={pillar.tenStarName === dayLabel ? '' : 'pointer'} {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item">
+          <span className={pillar.tenStarName === dayLabel ? '' : 'pointer'}>
             {pillar.tenStarName}
           </span>
         </div>
       </div>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item gzClass" {...DV_ATTR}>
-          <span className={pillar.stemColor} {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item gzClass">
+          <span className={pillar.stemColor}>
             {pillar.stem}
           </span>
         </div>
       </div>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item gzClass" {...DV_ATTR}>
-          <span className={pillar.branchColor} {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item gzClass">
+          <span className={pillar.branchColor}>
             {pillar.branch}
           </span>
         </div>
       </div>
-      <div className="pro-pan-row greyBg" {...DV_ATTR}>
-        <div className="pro-pan-row-item columnFlex alignSelfStart" {...DV_ATTR}>
+      <div className="pro-pan-row greyBg">
+        <div className="pro-pan-row-item columnFlex alignSelfStart">
           {pillar.hiddenStems.map((hs, i) => (
             <span
               key={i}
               className={hs.stemColor}
-              {...DV_ATTR}
               style={{ fontSize: 0, marginBottom: 2 }}
             >
-              <span {...DV_ATTR} style={{ fontSize: 15 }}>
+              <span style={{ fontSize: 15 }}>
                 {hs.stem}
               </span>
-              <span className="pointer" {...DV_ATTR} style={{ color: 'black', fontSize: 14 }}>
+              <span className="pointer" style={{ color: 'black', fontSize: 14 }}>
                 {hs.tenStarName}
               </span>
             </span>
           ))}
         </div>
       </div>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item" {...DV_ATTR}>
-          <span className="pointer" {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item">
+          <span className="pointer">
             {pillar.starLuck}
           </span>
         </div>
       </div>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item" {...DV_ATTR}>
-          <span className="pointer" {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item">
+          <span className="pointer">
             {pillar.selfSeat}
           </span>
         </div>
       </div>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item" {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item">
           {pillar.empty}
         </div>
       </div>
-      <div className="pro-pan-row" {...DV_ATTR}>
-        <div className="pro-pan-row-item" {...DV_ATTR}>
-          <span className="pointer" {...DV_ATTR}>
+      <div className="pro-pan-row">
+        <div className="pro-pan-row-item">
+          <span className="pointer">
             {pillar.naYin}
           </span>
         </div>
@@ -104,22 +101,21 @@ export const FortuneItemDisplay: React.FC<FortuneItemDisplayProps> = ({
   return (
     <div
       className={`pro-pan-yun-item pointer ${isSelected ? 'pro-pan-yun-item-selected' : ''}`}
-      {...DV_ATTR}
       onClick={onClick}
     >
-      <span className="pro-pan-yun-item-small" {...DV_ATTR}>
+      <span className="pro-pan-yun-item-small">
         {label}
       </span>
-      <span className="pro-pan-yun-item-label" {...DV_ATTR}>
-        <span style={{ color: getElementRgbColor(stem) }} {...DV_ATTR}>
+      <span className="pro-pan-yun-item-label">
+        <span style={{ color: getElementRgbColor(stem) }}>
           {stem}
         </span>
-        <span className="pro-pan-yun-item-shishen" {...DV_ATTR}>
+        <span className="pro-pan-yun-item-shishen">
           {getTenStarShort(stemTenStar)}
         </span>
       </span>
-      <span className="pro-pan-yun-item-label" {...DV_ATTR}>
-        <span style={{ color: getElementRgbColor(branch) }} {...DV_ATTR}>
+      <span className="pro-pan-yun-item-label">
+        <span style={{ color: getElementRgbColor(branch) }}>
           {branch}
         </span>
       </span>

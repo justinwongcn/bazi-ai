@@ -1,8 +1,6 @@
 import { useMemo } from 'react';
 import { Gender, HeavenStem, SolarTime } from 'tyme4ts';
-import type { BaseParams } from './useBaseParams';
-import { parseBool, parseDateSafe } from './useBaseParams';
-import { getAdjustedDate } from '../services/baziService';
+import type { SolarTimeResult } from './useSolarTime';
 
 export interface BirthInfo {
   gender: Gender;
@@ -18,32 +16,9 @@ export interface BirthInfo {
   birthYear: number;
 }
 
-export function useBirthInfo(baseParams: BaseParams): BirthInfo {
+export function useBirthInfo(solarTimeResult: SolarTimeResult): BirthInfo {
   return useMemo(() => {
-    const fallbackDate = new Date();
-    const baseDate = parseDateSafe(baseParams.date, fallbackDate);
-
-    const longitude = Number(baseParams.longitude);
-    const latitude = Number(baseParams.latitude);
-
-    const adjustedDate = getAdjustedDate(baseDate, {
-      longitude,
-      latitude,
-      isTrueSolar: parseBool(baseParams.isTrueSolar, true),
-      dst: parseBool(baseParams.dst, false),
-      earlyRatHour: parseBool(baseParams.earlyRatHour, true),
-    });
-
-    const gender = baseParams.sex === '0' ? Gender.WOMAN : Gender.MAN;
-
-    const solarTime = SolarTime.fromYmdHms(
-      adjustedDate.getFullYear(),
-      adjustedDate.getMonth() + 1,
-      adjustedDate.getDate(),
-      adjustedDate.getHours(),
-      adjustedDate.getMinutes(),
-      0,
-    );
+    const { solarTime, gender, birthYear } = solarTimeResult;
 
     const eightChar = solarTime.getLunarHour().getEightChar();
     const yearPillar = eightChar.getYear().getName();
@@ -60,7 +35,7 @@ export function useBirthInfo(baseParams: BaseParams): BirthInfo {
       pillars: { year: yearPillar, month: monthPillar, day: dayPillar, hour: hourPillar },
       dayStem,
       dayLabel,
-      birthYear: solarTime.getYear(),
+      birthYear,
     };
-  }, [baseParams]);
+  }, [solarTimeResult]);
 }

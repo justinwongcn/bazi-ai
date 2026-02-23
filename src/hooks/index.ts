@@ -1,5 +1,7 @@
 export { useBaseParams, parseBool, parseDateSafe, parseDateTime } from './useBaseParams';
 export type { BaseParams } from './useBaseParams';
+export { useSolarTime } from './useSolarTime';
+export type { SolarTimeResult } from './useSolarTime';
 export { useBirthInfo } from './useBirthInfo';
 export type { BirthInfo } from './useBirthInfo';
 export { useFortuneData } from './useFortuneData';
@@ -8,3 +10,4 @@ export { useInitialSelection, useFlowData } from './useFlowData';
 export type { SelectionState, FlowData } from './useFlowData';
 export { useProPageData } from './useProPageData';
 export type { TableColumn, ProPageColumns, BirthInfoDisplay, UseProPageDataResult } from './useProPageData';
+export { useBaziCalc } from './useBaziCalc';

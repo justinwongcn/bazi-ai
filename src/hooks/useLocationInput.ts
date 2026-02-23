@@ -230,21 +230,29 @@ export const useLocationInput = ({
     const nextProvince = city.parentProvince || (city.level === 'province' ? city.name : selectedProvince);
     const provinceCities = regionData.cities[nextProvince] || [];
     let nextCity = city.level === 'city' ? city.name : (city.parentCity || '');
-    if (!nextCity || (provinceCities.length > 0 && !provinceCities.includes(nextCity))) {
-      if (provinceCities.length > 0) {
-        const matchedCity = city.level === 'district'
-          ? provinceCities.find(item => (regionData.districts[item] || []).includes(city.name))
-          : undefined;
-        nextCity = matchedCity || provinceCities[0];
-      } else {
-        nextCity = city.level === 'city' ? city.name : (city.parentCity || nextProvince);
+
+    const isValidCity = !!nextCity && provinceCities.includes(nextCity);
+    
+    if (!isValidCity && provinceCities.length > 0) {
+      const matchedCity = city.level === 'district'
+        ? provinceCities.find(item => (regionData.districts[item] || []).includes(city.name))
+        : undefined;
+      
+      if (matchedCity) {
+        nextCity = matchedCity;
+      } else if (!nextCity) {
+        nextCity = provinceCities[0];
       }
     }
+
     const cityDistricts = regionData.districts[nextCity] || [];
     let nextDistrict = city.level === 'district' ? city.name : '';
+    
     if (cityDistricts.length > 0 && (!nextDistrict || !cityDistricts.includes(nextDistrict))) {
-      nextDistrict = cityDistricts[0];
+      const fuzzyDistrict = cityDistricts.find(d => d.includes(nextDistrict) || nextDistrict.includes(d));
+      nextDistrict = fuzzyDistrict || cityDistricts[0];
     }
+    
     setSelectedProvince(nextProvince);
     setSelectedCity(nextCity);
     setSelectedDistrict(nextDistrict || selectedDistrict);

@@ -4,6 +4,10 @@
     "chrome-devtools": {
       "type": "local",
       "command": ["bun", "x", "chrome-devtools-mcp@latest"]
+    },
+    "deepwiki": {
+      "type": "remote",
+      "url": "https://mcp.deepwiki.com/mcp"
     }
   }
 }

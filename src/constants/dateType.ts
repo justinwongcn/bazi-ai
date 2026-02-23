@@ -6,7 +6,7 @@ export const DATE_TYPE = {
 
 export type DateType = typeof DATE_TYPE[keyof typeof DATE_TYPE];
 
-export const BAZI_SEARCH_START_YEAR = 1901;
+export const BAZI_SEARCH_START_YEAR = 1801;
 export const BAZI_SEARCH_END_YEAR = 2099;
 
 export const HEAVENLY_STEMS = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'] as const;

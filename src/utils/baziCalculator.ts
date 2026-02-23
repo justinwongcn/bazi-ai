@@ -1,6 +1,11 @@
 import { SolarTime, EightChar, HeavenStem, EarthBranch, LunarHour } from 'tyme4ts';
 import { SolarTimeUtil } from './solarTimeUtil';
 
+export interface PillarInfo {
+  name: string;
+  naYin: string;
+}
+
 export interface BaziResult {
   yearPillar: string;
   monthPillar: string;
@@ -35,10 +40,14 @@ export interface BaziResult {
   monthNaYin: string;
   dayNaYin: string;
   hourNaYin: string;
-  taiYuan: string;
-  mingGong: string;
-  shenGong: string;
+  taiYuan: PillarInfo;
+  mingGong: PillarInfo;
+  shenGong: PillarInfo;
 }
+
+export const formatPillarInfo = (info: PillarInfo): string => {
+  return `${info.name} (${info.naYin})`;
+};
 
 export interface BaziOptions {
   year: number;
@@ -148,13 +157,16 @@ export class BaziCalculator {
     const getNaYinName = (pillar: { getSound: () => { getName: () => string } }) =>
       pillar.getSound().getName();
 
-    const formatPillarWithNaYin = (pillar: { getName: () => string; getSound: () => { getName: () => string } }) => {
-        return `${pillar.getName()} (${pillar.getSound().getName()})`;
+    const getPillarInfo = (pillar: { getName: () => string; getSound: () => { getName: () => string } }): PillarInfo => {
+        return {
+          name: pillar.getName(),
+          naYin: pillar.getSound().getName()
+        };
     };
 
-    const taiYuan = formatPillarWithNaYin(eightChar.getFetalOrigin());
-    const mingGong = formatPillarWithNaYin(eightChar.getOwnSign());
-    const shenGong = formatPillarWithNaYin(eightChar.getBodySign());
+    const taiYuan = getPillarInfo(eightChar.getFetalOrigin());
+    const mingGong = getPillarInfo(eightChar.getOwnSign());
+    const shenGong = getPillarInfo(eightChar.getBodySign());
     
     return {
       yearPillar: yearPillar.getName(),
